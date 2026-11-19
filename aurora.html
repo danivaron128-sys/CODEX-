@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Solicitudes · Comercial Aurora</title>
+<style>
+:root {
+  font-family: system-ui, sans-serif;
+  color: #1a2433;
+  background: #f3f5f9;
+  --muted: #526174;
+  --line: #e0e6ee;
+  --accent: #214abe;
+  --surface: #fff;
+  --radius: 15px;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+button, input, select, textarea { font: inherit; }
+button, .button {
+  display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+  min-height: 40px; border: 1px solid var(--line); border-radius: 8px; padding: .5rem .8rem;
+  background: #fff; color: #25364c; font-weight: 650; cursor: pointer; text-decoration: none;
+}
+button:hover, .button:hover { background: #f3f6ff; border-color: #b2c0eb; }
+.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.primary:hover { background: #193991; color: white; }
+:focus-visible { outline: 3px solid #5478dc; outline-offset: 3px; }
+[hidden] { display: none !important; }
+.top { background: #121e34; color: white; border-bottom: 1px solid #28364c; }
+.top-inner, main { max-width: 1510px; margin: auto; padding-inline: clamp(16px, 4vw, 58px); }
+.top-inner { min-height: 71px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 11px; font-weight: 720; font-size: 1.05rem; }
+.logo {
+  display: grid; place-items: center; width: 35px; height: 35px; border-radius: 9px;
+  background: #caddff; color: #162955; font-size: 1.3rem; font-weight: 800;
+}
+.demo { background: #233654; color: #dce8fd; border: 1px solid #385073; padding: 4px 9px; border-radius: 20px; font-size: .74rem; }
+main { padding-block: clamp(24px, 4vw, 48px) 32px; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: clamp(1.8rem, 4vw, 2.65rem); letter-spacing: -.045em; line-height: 1.1; }
+h2 { font-size: 1.14rem; letter-spacing: -.02em; }
+h3 { font-size: .95rem; }
+.subtle { color: var(--muted); font-size: .88rem; line-height: 1.5; }
+.heading { display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap; gap: 14px; margin-bottom: 23px; }
+.heading p { margin-top: 7px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.stat span { font-size: .82rem; font-weight: 650; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.stat span::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--dot, #5073d7); flex: none; }
+.stat strong { display: block; font-size: 1.7rem; margin-top: 4px; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 345px); gap: 16px; align-items: start; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); min-width: 0; box-shadow: 0 2px 6px #19304a07; }
+.card-head { padding: 17px 18px 13px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.filters { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 18px 15px; }
+input, select, textarea {
+  box-sizing: border-box; width: 100%; min-width: 0; min-height: 40px; border: 1px solid #ccd6e3;
+  border-radius: 8px; padding: .45rem .65rem; color: #1a2433; background: #fff;
+}
+input[readonly] { background: #f5f7fa; }
+textarea { resize: vertical; }
+table { border-collapse: collapse; width: 100%; text-align: left; font-size: .8rem; }
+thead { color: #47566b; background: #f6f8fb; }
+td, th { padding: 11px 8px; overflow-wrap: anywhere; }
+th:first-child, td:first-child { padding-left: 18px; }
+th:last-child, td:last-child { padding-right: 18px; }
+tbody tr { border-top: 1px solid #edf0f4; }
+tbody tr.selected { background: #eef3ff; }
+tbody tr:hover { background: #f5f7fe; }
+.ticket { color: #2046aa; font-size: .79rem; min-height: 32px; padding: .25rem .35rem; margin-left: -.35rem; background: transparent; border-color: transparent; white-space: nowrap; }
+.client-cell span, .deadline-cell span:not(.badge) { display: block; }
+.client-cell small { color: var(--muted); }
+.table-footer, .empty { padding: 13px 18px; }
+.table-footer { border-top: 1px solid var(--line); }
+.badge { display: inline-block; padding: 4px 7px; border-radius: 6px; background: #eef2f7; color: #3b4f65; font-weight: 650; font-size: .72rem; line-height: 1.25; }
+.badge.new { background: #e8efff; color: #20459f; }
+.badge.ok { background: #e4f5ea; color: #17613f; }
+.badge.notice { background: #fff2c9; color: #735000; }
+.badge.risk { background: #ffead8; color: #843b0c; }
+.badge.late { background: #fbe5e8; color: #972638; }
+.detail { padding: 17px 18px; overflow-wrap: anywhere; }
+.detail h2 { margin-bottom: 4px; }
+.detail > section { border-top: 1px solid var(--line); margin-top: 13px; padding-top: 13px; }
+.detail-heading, .section-heading { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.detail-heading h2 { white-space: nowrap; }
+.details-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin: 11px 0; font-size: .82rem; }
+dt { color: var(--muted); font-size: .74rem; }
+dd { margin: 2px 0 0; font-weight: 560; }
+.description { white-space: pre-wrap; }
+.events { list-style: none; padding: 0; margin: 8px 0 0; }
+.events li { border-left: 2px solid #c9d7f7; padding: 4px 0 7px 9px; margin-top: 5px; font-size: .82rem; }
+.events p { white-space: pre-wrap; }
+.session { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding: 13px 17px; }
+.actions { display: flex; flex-wrap: wrap; gap: 7px; }
+footer { margin-top: 17px; }
+dialog { width: min(540px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); border: 1px solid var(--line); border-radius: 16px; padding: 20px; color: inherit; box-shadow: 0 20px 80px #101b3b38; }
+dialog::backdrop { background: #111e35a0; }
+.dialog-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 13px; }
+.dialog-head button { min-width: 38px; padding-inline: 8px; font-size: 1.1rem; }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+label { display: grid; align-content: start; gap: 5px; font-size: .84rem; font-weight: 650; }
+.wide { grid-column: 1 / -1; }
+.form-actions { display: flex; justify-content: end; gap: 8px; margin-top: 14px; }
+.field-error, .error { color: #9d2032; font-size: .81rem; }
+.field-error:empty, .error:empty { display: none; }
+[aria-invalid="true"] { border-color: #b43144; }
+.status { margin-top: 7px; color: #1b5474; }
+@media (max-width: 1100px) { .workspace { grid-template-columns: minmax(0, 1fr) minmax(270px, 300px); } }
+@media (max-width: 900px) { .workspace { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .stat { padding: 10px; }
+  .filters { grid-template-columns: 1fr 1fr; padding-inline: 12px; }
+  .filters input { grid-column: 1 / -1; }
+  .card-head, .detail { padding-inline: 12px; }
+  table, tbody { display: block; }
+  thead { position: absolute; height: 1px; width: 1px; overflow: hidden; clip-path: inset(50%); }
+  tbody tr { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; padding: 10px 12px; }
+  tbody td, tbody td:first-child, tbody td:last-child { padding: 0; }
+  tbody td::before { content: attr(data-label); display: block; color: var(--muted); font-size: .69rem; }
+  .deadline-cell { grid-column: 1 / -1; }
+  .fields { grid-template-columns: minmax(0, 1fr); gap: 9px; }
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-inner">
+  <div class="brand"><span class="logo" aria-hidden="true">A</span> Comercial Aurora</div>
+  <span class="demo">Datos de demostración</span>
+</div></header>
+<main>
+  <div class="heading">
+    <div><h1>Solicitudes</h1><p class="subtle">Radicación y seguimiento de atención al cliente</p></div>
+    <button type="button" class="primary" id="open-intake"><span aria-hidden="true">+</span> Radicar solicitud</button>
+  </div>
+  <section class="stats" aria-label="Resumen de solicitudes">
+    <div class="stat"><span>Abiertas</span><strong id="stat-open">0</strong></div>
+    <div class="stat" style="--dot:#b06c08"><span>Con aviso de plazo</span><strong id="stat-warning">0</strong></div>
+    <div class="stat" style="--dot:#b43345"><span>Vencidas</span><strong id="stat-late">0</strong></div>
+    <div class="stat" style="--dot:#248458"><span>Resueltas y cerradas</span><strong id="stat-done">0</strong></div>
+  </section>
+  <div class="workspace">
+    <section class="card" aria-labelledby="inbox-title">
+      <div class="card-head"><h2 id="inbox-title">Bandeja de solicitudes</h2></div>
+      <div class="filters">
+        <input type="search" id="search" aria-label="Buscar por ticket, NIT o razón social" placeholder="Buscar ticket, NIT o cliente">
+        <select id="filter-state" aria-label="Filtrar por estado"><option value="">Todos los estados</option></select>
+        <select id="filter-agent" aria-label="Filtrar por responsable"><option value="">Todos los agentes</option></select>
+      </div>
+      <table aria-label="Solicitudes">
+        <thead><tr><th scope="col">Ticket</th><th scope="col">Cliente</th><th scope="col">Responsable</th><th scope="col">Estado</th><th scope="col">Plazo de 48 h</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p class="empty subtle" id="empty" hidden>No hay solicitudes para estos filtros.</p>
+      <p class="table-footer subtle" id="count" aria-live="polite"></p>
+    </section>
+    <aside class="card detail" id="detail" aria-label="Detalle de la solicitud"></aside>
+  </div>
+  <section class="card session" aria-labelledby="session-title">
+    <div>
+      <h2 id="session-title">Datos de la sesión</h2>
+      <p class="subtle" id="session-state">Exporta un respaldo JSON antes de cerrar la aplicación.</p>
+      <p class="subtle status" id="file-status" role="status"></p>
+    </div>
+    <div class="actions">
+      <button type="button" id="open-import">Importar clientes</button>
+      <button type="button" id="restore">Restaurar respaldo</button>
+      <button type="button" id="export">Exportar JSON</button>
+    </div>
+    <input id="backup-file" type="file" accept=".json,application/json" hidden>
+  </section>
+  <footer class="subtle">Plazo de 48 horas corridas · Fechas en hora de Colombia</footer>
+</main>
+
+<dialog id="intake-dialog" aria-labelledby="intake-title">
+  <div class="dialog-head"><h2 id="intake-title">Radicar solicitud</h2><button type="button" data-close aria-label="Cerrar formulario">×</button></div>
+  <form id="intake" novalidate>
+    <div class="fields">
+      <label>Canal de origen<select id="channel" required aria-describedby="channel-error" autofocus><option value="">Selecciona el canal</option></select><span id="channel-error" class="field-error"></span></label>
+      <label>Tipo de solicitud<select id="type" required aria-describedby="type-error"><option value="">Selecciona el tipo</option></select><span id="type-error" class="field-error"></span></label>
+      <label>NIT del cliente<input id="nit" list="clients" required autocomplete="off" placeholder="Busca en el directorio" aria-describedby="nit-error"><datalist id="clients"></datalist><span id="nit-error" class="field-error"></span></label>
+      <label>Razón social<input id="client-name" readonly tabindex="-1"></label>
+      <label class="wide">Pedido relacionado (opcional)<input id="order" autocomplete="off"></label>
+      <label class="wide">Descripción<textarea id="description" rows="3" required aria-describedby="description-help description-error"></textarea><span class="subtle" id="description-help">Mínimo 10 caracteres.</span><span id="description-error" class="field-error"></span></label>
+    </div>
+    <p id="intake-error" role="alert" class="error"></p>
+    <div class="form-actions"><button type="button" data-close>Cancelar</button><button class="primary" type="submit">Guardar radicación</button></div>
+  </form>
+</dialog>
+
+<dialog id="transition-dialog" aria-labelledby="transition-title">
+  <div class="dialog-head"><h2 id="transition-title">Actualizar estado</h2><button type="button" data-close aria-label="Cerrar actualización">×</button></div>
+  <form id="transition" novalidate>
+    <div class="fields">
+      <label class="wide">Nuevo estado<select id="next-state" required autofocus></select></label>
+      <label class="wide"><span id="comment-label">Comentario (opcional)</span><textarea id="comment" rows="3" aria-describedby="transition-error"></textarea></label>
+    </div>
+    <p id="transition-error" role="alert" class="error"></p>
+    <div class="form-actions"><button type="button" data-close>Cancelar</button><button type="submit" class="primary">Guardar estado</button></div>
+  </form>
+</dialog>
+
+<dialog id="import-dialog" aria-labelledby="import-title">
+  <div class="dialog-head"><h2 id="import-title">Importar clientes</h2><button type="button" data-close aria-label="Cerrar importación">×</button></div>
+  <p class="subtle">Selecciona una lista JSON o un CSV UTF-8 con los campos <code>cliente_nit</code> y <code>cliente_nombre</code>. En JSON, escribe el NIT entre comillas.</p>
+  <form id="import-form">
+    <label style="margin-top:12px">Directorio de clientes<input type="file" id="client-file" accept=".json,.csv,application/json,text/csv" required autofocus></label>
+    <p id="import-error" role="alert" class="error"></p>
+    <div class="form-actions"><button type="button" data-close>Cancelar</button><button type="submit" class="primary">Cargar directorio</button></div>
+  </form>
+</dialog>
+
+<script>
+'use strict';
+
+const HOUR = 3_600_000;
+const MINUTE = 60_000;
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const FORMAT_VERSION = 1;
+const ACTOR = 'Operador de demostración';
+const CHANNELS = {
+  Llamada_Telefonica: 'Llamada telefónica',
+  Mensajeria: 'Mensajería',
+  Correo_Electronico: 'Correo electrónico'
+};
+const TYPES = {
+  Consulta_Stock: 'Consulta de stock',
+  Estado_Pedido: 'Estado de pedido',
+  Inconformidad_Envio: 'Inconformidad de envío',
+  Facturacion_Cobro: 'Facturación o cobro',
+  Devolucion: 'Devolución'
+};
+const STATES = {
+  Nuevo: 'Nuevo',
+  En_Proceso: 'En proceso',
+  Pendiente_Logistica: 'Pendiente de logística',
+  Pendiente_Ventas: 'Pendiente de ventas',
+  Resuelto: 'Resuelto',
+  Cerrado: 'Cerrado'
+};
+const TRANSITIONS = {
+  Nuevo: ['En_Proceso'],
+  En_Proceso: ['Pendiente_Logistica', 'Pendiente_Ventas', 'Resuelto'],
+  Pendiente_Logistica: ['En_Proceso'],
+  Pendiente_Ventas: ['En_Proceso'],
+  Resuelto: ['Cerrado'],
+  Cerrado: []
+};
+const AGENTS = [
+  { id: 'Agente_01', name: 'Agente 1' }, { id: 'Agente_02', name: 'Agente 2' },
+  { id: 'Agente_03', name: 'Agente 3' }, { id: 'Agente_04', name: 'Agente 4' }
+];
+const INITIAL_CLIENTS = [
+  { cliente_nit: '900123456', cliente_nombre: 'Colegio Arboleda' },
+  { cliente_nit: '800987654', cliente_nombre: 'Papelería Horizonte' },
+  { cliente_nit: '001234567', cliente_nombre: 'Instituto Campus Norte' },
+  { cliente_nit: '901245681', cliente_nombre: 'Soluciones Páramo SAS' },
+  { cliente_nit: '830412358', cliente_nombre: 'Liceo Santa Clara' },
+  { cliente_nit: '901020371', cliente_nombre: 'Oficinas del Río SAS' }
+];
+const monthFormat = new Intl.DateTimeFormat('es-CO', {
+  timeZone: 'America/Bogota', year: 'numeric', month: '2-digit'
+});
+const dateFormat = new Intl.DateTimeFormat('es-CO', {
+  timeZone: 'America/Bogota', dateStyle: 'medium', timeStyle: 'short'
+});
+
+function monthKey(time) {
+  const parts = Object.fromEntries(monthFormat.formatToParts(time).map(part => [part.type, part.value]));
+  return parts.year + parts.month;
+}
+
+function newSession() {
+  return {
+    version: FORMAT_VERSION,
+    clients: INITIAL_CLIENTS.map(client => ({ ...client })),
+    agents: AGENTS.map(agent => ({ ...agent })),
+    requests: [], history: [], monthlyCounters: {}, nextAgent: 0
+  };
+}
+
+function register(session, input, time) {
+  const month = monthKey(time);
+  const sequence = (session.monthlyCounters[month] ?? 0) + 1;
+  if (sequence > 9999) throw new Error('Se agotó el consecutivo de este mes. No se guardó la solicitud.');
+  const ticket_id = 'AUR-' + month + '-' + String(sequence).padStart(4, '0');
+  const timestamp = new Date(time).toISOString();
+  const request = {
+    ticket_id, fecha_hora_recepcion: timestamp, ...input,
+    agente_responsable_id: session.agents[session.nextAgent].id,
+    estado_solicitud: 'Nuevo',
+    fecha_hora_resolucion: null, tiempo_atencion_horas: null, cumple_sla_48h: null
+  };
+  session.requests.push(request);
+  session.history.push({
+    evento_id: ticket_id + '-1', ticket_id, timestamp, usuario_id: ACTOR,
+    accion: 'Radicación · ' + CHANNELS[request.canal_origen],
+    estado_anterior: null, estado_nuevo: 'Nuevo', comentarios: ''
+  });
+  session.monthlyCounters[month] = sequence;
+  session.nextAgent = (session.nextAgent + 1) % session.agents.length;
+  return request;
+}
+
+function moveRequest(session, request, next, comment, time) {
+  const previous = request.estado_solicitud;
+  if (!TRANSITIONS[previous].includes(next)) throw new Error('Esa transición de estado no está permitida.');
+  const message = comment.trim();
+  if (next === 'Resuelto' && !message) throw new Error('Escribe la respuesta de fondo antes de resolver.');
+  const events = session.history.filter(event => event.ticket_id === request.ticket_id);
+  const eventTime = Math.max(time, Date.parse(events.at(-1).timestamp));
+  const timestamp = new Date(eventTime).toISOString();
+  if (next === 'Resuelto') {
+    const elapsed = eventTime - Date.parse(request.fecha_hora_recepcion);
+    request.fecha_hora_resolucion = timestamp;
+    request.tiempo_atencion_horas = elapsed / HOUR;
+    request.cumple_sla_48h = elapsed <= 48 * HOUR;
+  }
+  request.estado_solicitud = next;
+  session.history.push({
+    evento_id: request.ticket_id + '-' + (events.length + 1), ticket_id: request.ticket_id,
+    timestamp, usuario_id: ACTOR, accion: 'Cambio de estado',
+    estado_anterior: previous, estado_nuevo: next, comentarios: message
+  });
+}
+
+function displayDuration(duration, roundUp = false) {
+  const minutes = roundUp ? Math.ceil(duration / MINUTE) : Math.floor(duration / MINUTE);
+  return Math.floor(minutes / 60) + ' h ' + String(minutes % 60).padStart(2, '0') + ' min';
+}
+
+function deadline(request, now) {
+  const received = Date.parse(request.fecha_hora_recepcion);
+  const due = received + 48 * HOUR;
+  if (request.fecha_hora_resolucion !== null) {
+    return {
+      tone: request.cumple_sla_48h ? 'ok' : 'late',
+      label: request.cumple_sla_48h ? 'Cumplido' : 'Incumplido',
+      detail: displayDuration(Date.parse(request.fecha_hora_resolucion) - received), due, closed: true
+    };
+  }
+  const age = now - received;
+  if (now > due) return { tone: 'late', label: 'Vencido', detail: displayDuration(now - due) + ' de atraso', due };
+  const detail = displayDuration(due - now, true) + ' restantes';
+  if (age >= 36 * HOUR) return { tone: 'risk', label: 'Riesgo · 36 h', detail, due };
+  if (age >= 24 * HOUR) return { tone: 'notice', label: 'Aviso · 24 h', detail, due };
+  return { tone: 'ok', label: 'En plazo', detail, due };
+}
+
+function demoSession(now) {
+  const session = newSession();
+  const cases = [
+    [58, 4, 'Mensajeria', 'Devolucion', 'El cliente solicita recoger dos cajas de carpetas.'],
+    [40, 2, 'Llamada_Telefonica', 'Inconformidad_Envio', 'Faltan dos resmas en la entrega del pedido.'],
+    [28, 1, 'Correo_Electronico', 'Facturacion_Cobro', 'Actualizar el correo de recepción de facturas.'],
+    [10, 3, 'Correo_Electronico', 'Estado_Pedido', 'Confirmar la fecha de entrega del próximo pedido.'],
+    [5, 0, 'Llamada_Telefonica', 'Consulta_Stock', 'Consultar disponibilidad de marcadores borrables.'],
+    [2, 5, 'Mensajeria', 'Estado_Pedido', 'Confirmar el horario de recepción del despacho.']
+  ];
+  for (const [hours, clientIndex, channel, type, description] of cases) {
+    const received = now - hours * HOUR;
+    const request = register(session, {
+      ...session.clients[clientIndex], canal_origen: channel, tipo_solicitud: type,
+      descripcion_detallada: description, pedido_erp_id: hours === 40 ? 'PED-1042' : null
+    }, received);
+    if ([58, 40, 28, 10].includes(hours)) {
+      moveRequest(session, request, 'En_Proceso', 'Caso revisado por atención al cliente.', received + HOUR);
+    }
+    if (hours === 40) {
+      moveRequest(session, request, 'Pendiente_Logistica', 'Verificar unidades con el equipo de despacho.', received + 2 * HOUR);
+    }
+    if (hours === 10) {
+      moveRequest(session, request, 'Resuelto', 'Se confirmó la fecha de entrega con el cliente.', received + 3 * HOUR);
+    }
+  }
+  return session;
+}
+
+function parseCsv(text) {
+  const rows = [];
+  let row = [], field = '', quoted = false, afterQuote = false;
+  function endField() {
+    row.push(field);
+    field = '';
+    afterQuote = false;
+  }
+  function endRow() {
+    endField();
+    if (row.length > 1 || row[0].trim()) rows.push(row);
+    row = [];
+  }
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (quoted) {
+      if (char !== '"') field += char;
+      else if (text[i + 1] === '"') { field += '"'; i++; }
+      else { quoted = false; afterQuote = true; }
+    } else if (char === ',') {
+      endField();
+    } else if (char === '\r' || char === '\n') {
+      endRow();
+      if (char === '\r' && text[i + 1] === '\n') i++;
+    } else if (char === '"' && !field && !afterQuote) {
+      quoted = true;
+    } else if (char === '"' || afterQuote) {
+      throw new Error('Comillas no válidas en el CSV cerca del registro ' + (rows.length + 1) + '.');
+    } else {
+      field += char;
+    }
+  }
+  if (quoted) throw new Error('Hay un campo CSV entre comillas sin cerrar.');
+  endRow();
+  const header = rows.shift()?.map(value => value.trim());
+  const nitIndex = header?.indexOf('cliente_nit') ?? -1;
+  const nameIndex = header?.indexOf('cliente_nombre') ?? -1;
+  if (nitIndex < 0 || nameIndex < 0 || new Set(header).size !== header.length) {
+    throw new Error('El CSV debe incluir los encabezados cliente_nit y cliente_nombre sin duplicados.');
+  }
+  return rows.map((values, index) => {
+    if (values.length !== header.length) throw new Error('Número de columnas incorrecto en el registro CSV ' + (index + 2) + '.');
+    return { cliente_nit: values[nitIndex], cliente_nombre: values[nameIndex] };
+  });
+}
+
+function validateClients(value, firstRow = 1) {
+  if (!Array.isArray(value) || !value.length) throw new Error('El directorio debe contener al menos un cliente.');
+  const clients = new Map();
+  value.forEach((record, index) => {
+    const nit = record?.cliente_nit;
+    const name = record?.cliente_nombre;
+    const row = index + firstRow;
+    if (typeof nit !== 'string' || !nit.trim() || typeof name !== 'string' || !name.trim()) {
+      throw new Error('Registro ' + row + ': se requiere NIT como texto y razón social.');
+    }
+    const key = nit.trim();
+    if (clients.has(key)) throw new Error('Registro ' + row + ': NIT duplicado (' + key + ').');
+    clients.set(key, { cliente_nit: key, cliente_nombre: name.trim() });
+  });
+  return clients;
+}
+
+function isTimestamp(value) {
+  const time = Date.parse(value);
+  return typeof value === 'string' && Number.isFinite(time) && new Date(time).toISOString() === value;
+}
+
+function readBackup(data) {
+  if (data?.version !== FORMAT_VERSION) throw new Error('El formato o la versión del respaldo no es compatible.');
+  const clients = validateClients(data.clients);
+  if (!Array.isArray(data.agents) || data.agents.length !== AGENTS.length ||
+      !data.agents.every((agent, i) => agent?.id === AGENTS[i].id && agent.name === AGENTS[i].name) ||
+      !Number.isInteger(data.nextAgent) || data.nextAgent < 0 || data.nextAgent >= AGENTS.length ||
+      !Array.isArray(data.requests) || !Array.isArray(data.history) ||
+      !data.monthlyCounters || typeof data.monthlyCounters !== 'object' || Array.isArray(data.monthlyCounters)) {
+    throw new Error('Faltan datos de sesión o la asignación no es válida.');
+  }
+  const counters = Object.entries(data.monthlyCounters);
+  if (counters.some(([month, count]) => !/^\d{4}(0[1-9]|1[0-2])$/.test(month) ||
+      !Number.isInteger(count) || count < 1 || count > 9999)) {
+    throw new Error('El respaldo contiene consecutivos mensuales inválidos.');
+  }
+  const requests = new Map();
+  const highest = new Map();
+  const agents = new Set(AGENTS.map(agent => agent.id));
+  for (const request of data.requests) {
+    const id = request?.ticket_id;
+    const match = typeof id === 'string' && /^AUR-(\d{6})-(\d{4})$/.exec(id);
+    if (!match || requests.has(id) || !isTimestamp(request.fecha_hora_recepcion) ||
+        !clients.has(request.cliente_nit) || typeof request.cliente_nombre !== 'string' || !request.cliente_nombre.trim() ||
+        !agents.has(request.agente_responsable_id) || !Object.hasOwn(STATES, request.estado_solicitud) ||
+        !Object.hasOwn(CHANNELS, request.canal_origen) || !Object.hasOwn(TYPES, request.tipo_solicitud) ||
+        typeof request.descripcion_detallada !== 'string' || request.descripcion_detallada.trim().length < 10 ||
+        !(request.pedido_erp_id === null || typeof request.pedido_erp_id === 'string')) {
+      throw new Error('El respaldo contiene una solicitud inválida, duplicada o con referencias desconocidas.');
+    }
+    const received = Date.parse(request.fecha_hora_recepcion);
+    const sequence = Number(match[2]);
+    if (monthKey(received) !== match[1] || sequence < 1) throw new Error('El ID y la fecha de recepción no coinciden.');
+    highest.set(match[1], Math.max(highest.get(match[1]) ?? 0, sequence));
+    const resolved = ['Resuelto', 'Cerrado'].includes(request.estado_solicitud);
+    const resolution = Date.parse(request.fecha_hora_resolucion);
+    const elapsed = resolution - received;
+    if (resolved
+      ? !isTimestamp(request.fecha_hora_resolucion) || elapsed < 0 ||
+        request.tiempo_atencion_horas !== elapsed / HOUR || request.cumple_sla_48h !== (elapsed <= 48 * HOUR)
+      : request.fecha_hora_resolucion !== null || request.tiempo_atencion_horas !== null || request.cumple_sla_48h !== null) {
+      throw new Error('Los datos de resolución de ' + id + ' son incoherentes.');
+    }
+    requests.set(id, request);
+  }
+  if (counters.length !== highest.size || counters.some(([month, count]) => highest.get(month) !== count)) {
+    throw new Error('Los consecutivos del respaldo no coinciden con las solicitudes.');
+  }
+  const histories = new Map();
+  for (const event of data.history) {
+    const request = requests.get(event?.ticket_id);
+    const previous = histories.get(event?.ticket_id);
+    const first = !previous;
+    const index = (previous?.index ?? 0) + 1;
+    if (!request || event.evento_id !== event.ticket_id + '-' + index ||
+        !isTimestamp(event.timestamp) || typeof event.usuario_id !== 'string' || !event.usuario_id.trim() ||
+        typeof event.comentarios !== 'string' || !Object.hasOwn(STATES, event.estado_nuevo) ||
+        (first
+          ? event.estado_anterior !== null || event.estado_nuevo !== 'Nuevo' ||
+            event.accion !== 'Radicación · ' + CHANNELS[request.canal_origen] || event.timestamp !== request.fecha_hora_recepcion
+          : event.estado_anterior !== previous.event.estado_nuevo || event.accion !== 'Cambio de estado' ||
+            !TRANSITIONS[event.estado_anterior].includes(event.estado_nuevo) || event.timestamp < previous.event.timestamp) ||
+        (event.estado_nuevo === 'Resuelto' && (event.timestamp !== request.fecha_hora_resolucion || !event.comentarios.trim()))) {
+      throw new Error('El respaldo contiene un evento de historial incoherente.');
+    }
+    histories.set(event.ticket_id, { index, event });
+  }
+  for (const request of requests.values()) {
+    if (histories.get(request.ticket_id)?.event.estado_nuevo !== request.estado_solicitud) {
+      throw new Error('El historial no coincide con el estado de ' + request.ticket_id + '.');
+    }
+  }
+  return {
+    version: FORMAT_VERSION, clients: [...clients.values()], agents: data.agents,
+    requests: data.requests, history: data.history, monthlyCounters: Object.fromEntries(counters),
+    nextAgent: data.nextAgent
+  };
+}
+
+const byId = id => document.getElementById(id);
+function element(tag, value, className) {
+  const node = document.createElement(tag);
+  if (value !== undefined) node.textContent = value;
+  if (className) node.className = className;
+  return node;
+}
+
+let session = demoSession(Date.now());
+let selectedId = session.requests.find(request => request.estado_solicitud === 'Pendiente_Logistica').ticket_id;
+let dirty = false;
+
+function setDirty(value) {
+  dirty = value;
+  byId('session-state').textContent = value
+    ? 'Cambios sin exportar. Guarda un respaldo JSON antes de cerrar.'
+    : 'Exporta un respaldo JSON antes de cerrar la aplicación.';
+}
+
+function flash(message, error = false) {
+  const status = byId('file-status');
+  status.textContent = message;
+  status.classList.toggle('error', error);
+}
+
+function addOptions(select, values) {
+  for (const [value, label] of values) select.add(new Option(label, value));
+}
+
+function refreshDirectory() {
+  const options = document.createDocumentFragment();
+  for (const client of session.clients) {
+    const option = document.createElement('option');
+    option.value = client.cliente_nit;
+    option.label = client.cliente_nombre;
+    options.append(option);
+  }
+  byId('clients').replaceChildren(options);
+  fillClient();
+}
+
+function fillClient() {
+  const nit = byId('nit').value.trim();
+  const client = session.clients.find(record => record.cliente_nit === nit);
+  byId('client-name').value = client?.cliente_nombre ?? '';
+  return client;
+}
+
+function searchText(text) {
+  return text.toLocaleLowerCase('es-CO').normalize('NFD').replace(/\p{Diacritic}/gu, '');
+}
+
+function timeContent(container, request, now, showDue = false) {
+  const value = deadline(request, now);
+  container.replaceChildren(element('span', value.label, 'badge ' + value.tone),
+    element('span', value.detail, 'subtle'));
+  if (showDue) container.append(element('span', 'Vencimiento: ' + dateFormat.format(value.due), 'subtle'));
+}
+
+function renderStats(now) {
+  const totals = { open: 0, warning: 0, late: 0, done: 0 };
+  for (const request of session.requests) {
+    const value = deadline(request, now);
+    if (value.closed) totals.done++;
+    else {
+      totals.open++;
+      if (value.tone === 'late') totals.late++;
+      if (value.tone === 'risk' || value.tone === 'notice') totals.warning++;
+    }
+  }
+  for (const [key, count] of Object.entries(totals)) byId('stat-' + key).textContent = count;
+}
+
+function renderInbox() {
+  const now = Date.now();
+  const query = searchText(byId('search').value.trim());
+  const status = byId('filter-state').value;
+  const agent = byId('filter-agent').value;
+  const results = session.requests.filter(request =>
+    (!status || request.estado_solicitud === status) &&
+    (!agent || request.agente_responsable_id === agent) &&
+    [request.ticket_id, request.cliente_nit, request.cliente_nombre].some(value => searchText(value).includes(query))
+  ).sort((a, b) => b.fecha_hora_recepcion.localeCompare(a.fecha_hora_recepcion) || b.ticket_id.localeCompare(a.ticket_id));
+  const fragment = document.createDocumentFragment();
+  for (const request of results) {
+    const row = element('tr');
+    row.classList.toggle('selected', request.ticket_id === selectedId);
+    const ticket = element('button', request.ticket_id, 'ticket');
+    ticket.type = 'button';
+    ticket.dataset.ticket = request.ticket_id;
+    ticket.setAttribute('aria-pressed', String(request.ticket_id === selectedId));
+    const client = element('div', undefined, 'client-cell');
+    client.append(element('span', request.cliente_nombre), element('small', request.cliente_nit));
+    const sla = element('div', undefined, 'deadline-cell');
+    sla.dataset.deadline = request.ticket_id;
+    timeContent(sla, request, now);
+    const values = [
+      ['Ticket', ticket],
+      ['Cliente', client],
+      ['Responsable', element('span', session.agents.find(agent => agent.id === request.agente_responsable_id).name)],
+      ['Estado', element('span', STATES[request.estado_solicitud],
+        'badge' + (request.estado_solicitud === 'Nuevo' ? ' new' : ''))],
+      ['Plazo', sla]
+    ];
+    for (const [label, value] of values) {
+      const cell = element('td');
+      cell.dataset.label = label;
+      if (value === sla) cell.className = 'deadline-cell';
+      cell.append(value);
+      row.append(cell);
+    }
+    fragment.append(row);
+  }
+  byId('rows').replaceChildren(fragment);
+  byId('empty').hidden = results.length > 0;
+  const countText = results.length + ' de ' + session.requests.length + ' solicitudes';
+  if (byId('count').textContent !== countText) byId('count').textContent = countText;
+  renderStats(now);
+}
+
+function renderDetail() {
+  const detail = byId('detail');
+  const request = session.requests.find(item => item.ticket_id === selectedId);
+  if (!request) {
+    detail.replaceChildren(element('h2', 'Detalle de la solicitud'), element('p', 'Selecciona un ticket de la bandeja.', 'subtle'));
+    return;
+  }
+  const top = element('div', undefined, 'detail-heading');
+  const title = element('div');
+  title.append(element('h2', request.ticket_id), element('p', request.cliente_nombre, 'subtle'));
+  top.append(title, element('span', STATES[request.estado_solicitud], 'badge'));
+
+  const fields = element('dl', undefined, 'details-list');
+  const values = [
+    ['NIT', request.cliente_nit], ['Responsable', session.agents.find(agent => agent.id === request.agente_responsable_id).name],
+    ['Canal', CHANNELS[request.canal_origen]], ['Tipo', TYPES[request.tipo_solicitud]],
+    ['Recepción', dateFormat.format(Date.parse(request.fecha_hora_recepcion))], ['Pedido', request.pedido_erp_id || 'Sin pedido']
+  ];
+  if (request.fecha_hora_resolucion) values.push(['Resolución', dateFormat.format(Date.parse(request.fecha_hora_resolucion))]);
+  for (const [label, value] of values) {
+    const pair = element('div');
+    pair.append(element('dt', label), element('dd', value));
+    fields.append(pair);
+  }
+  const summary = element('p', request.descripcion_detallada, 'subtle description');
+  const slaSection = element('section');
+  const slaHead = element('div', undefined, 'section-heading');
+  slaHead.append(element('h3', 'Plazo de atención'));
+  const nextStates = TRANSITIONS[request.estado_solicitud];
+  if (nextStates.length) {
+    const button = element('button', 'Actualizar estado');
+    button.type = 'button';
+    button.addEventListener('click', () => openTransition(request));
+    slaHead.append(button);
+  }
+  const sla = element('div', undefined, 'deadline-cell');
+  sla.id = 'detail-deadline';
+  timeContent(sla, request, Date.now(), true);
+  slaSection.append(slaHead, sla);
+  const log = element('section');
+  const events = element('ol', undefined, 'events');
+  for (const event of session.history.filter(item => item.ticket_id === request.ticket_id)) {
+    const entry = element('li');
+    const description = event.estado_anterior
+      ? STATES[event.estado_anterior] + ' → ' + STATES[event.estado_nuevo]
+      : event.accion;
+    entry.append(element('strong', description),
+      element('p', dateFormat.format(Date.parse(event.timestamp)) + ' · ' + event.usuario_id, 'subtle'));
+    if (event.comentarios) entry.append(element('p', event.comentarios));
+    events.append(entry);
+  }
+  log.append(element('h3', 'Historial'), events);
+  detail.replaceChildren(top, fields, summary, slaSection, log);
+}
+
+function refreshDeadlines() {
+  const now = Date.now();
+  const requests = new Map(session.requests.map(request => [request.ticket_id, request]));
+  for (const container of document.querySelectorAll('[data-deadline]')) {
+    timeContent(container, requests.get(container.dataset.deadline), now);
+  }
+  const detail = byId('detail-deadline');
+  if (detail) timeContent(detail, requests.get(selectedId), now, true);
+  renderStats(now);
+}
+
+function selectRequest(id, focusTicket = false) {
+  selectedId = id;
+  renderInbox();
+  renderDetail();
+  if (focusTicket) {
+    const ticket = [...byId('rows').querySelectorAll('[data-ticket]')].find(button => button.dataset.ticket === id);
+    ticket?.focus();
+  }
+}
+
+function intakeFieldError(field, message = '') {
+  byId(field + '-error').textContent = message;
+  byId(field).setAttribute('aria-invalid', String(Boolean(message)));
+}
+
+function clearFilters() {
+  byId('search').value = '';
+  byId('filter-state').value = '';
+  byId('filter-agent').value = '';
+}
+
+function openIntake() {
+  byId('intake').reset();
+  fillClient();
+  for (const field of ['channel', 'type', 'nit', 'description']) intakeFieldError(field);
+  byId('intake-error').textContent = '';
+  byId('intake-dialog').showModal();
+}
+
+function updateCommentLabel() {
+  const required = byId('next-state').value === 'Resuelto';
+  byId('comment-label').textContent = required ? 'Respuesta de fondo (obligatoria)' : 'Comentario (opcional)';
+  byId('comment').required = required;
+  byId('comment').removeAttribute('aria-invalid');
+  byId('transition-error').textContent = '';
+}
+
+function openTransition(request) {
+  const select = byId('next-state');
+  select.replaceChildren();
+  addOptions(select, TRANSITIONS[request.estado_solicitud].map(state => [state, STATES[state]]));
+  byId('comment').value = '';
+  updateCommentLabel();
+  byId('transition-dialog').showModal();
+}
+
+async function fileText(file) {
+  if (!file || file.size > MAX_FILE_BYTES) throw new Error('Selecciona un archivo de hasta 10 MB.');
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(await file.arrayBuffer());
+  } catch {
+    throw new Error('El archivo no se pudo leer como texto UTF-8.');
+  }
+}
+
+function decodeJson(text) {
+  try { return JSON.parse(text); }
+  catch { throw new Error('El archivo no contiene un JSON válido.'); }
+}
+
+for (const dialog of document.querySelectorAll('dialog')) {
+  for (const button of dialog.querySelectorAll('[data-close]')) {
+    button.addEventListener('click', () => dialog.close());
+  }
+}
+addOptions(byId('channel'), Object.entries(CHANNELS));
+addOptions(byId('type'), Object.entries(TYPES));
+addOptions(byId('filter-state'), Object.entries(STATES));
+addOptions(byId('filter-agent'), session.agents.map(agent => [agent.id, agent.name]));
+refreshDirectory();
+renderInbox();
+renderDetail();
+
+byId('open-intake').addEventListener('click', openIntake);
+byId('nit').addEventListener('input', fillClient);
+byId('intake').addEventListener('submit', event => {
+  event.preventDefault();
+  const channel = byId('channel').value;
+  const type = byId('type').value;
+  const client = fillClient();
+  const description = byId('description').value.trim();
+  const errors = {
+    channel: Object.hasOwn(CHANNELS, channel) ? '' : 'Selecciona el canal de origen.',
+    type: Object.hasOwn(TYPES, type) ? '' : 'Selecciona un tipo de solicitud.',
+    nit: client ? '' : 'Indica un NIT registrado en el directorio.',
+    description: description.length >= 10 ? '' : 'Escribe al menos diez caracteres.'
+  };
+  for (const [field, message] of Object.entries(errors)) intakeFieldError(field, message);
+  const invalid = Object.keys(errors).find(field => errors[field]);
+  byId('intake-error').textContent = invalid ? 'Revisa los campos marcados.' : '';
+  if (invalid) {
+    byId(invalid).focus();
+    return;
+  }
+  let request;
+  try {
+    request = register(session, {
+      ...client, canal_origen: channel, tipo_solicitud: type, descripcion_detallada: description,
+      pedido_erp_id: byId('order').value.trim() || null
+    }, Date.now());
+  } catch (error) {
+    byId('intake-error').textContent = error.message;
+    return;
+  }
+  byId('intake-dialog').close();
+  setDirty(true);
+  clearFilters();
+  selectRequest(request.ticket_id, true);
+  flash('Solicitud ' + request.ticket_id + ' radicada.');
+});
+
+byId('search').addEventListener('input', renderInbox);
+for (const filter of ['filter-state', 'filter-agent']) byId(filter).addEventListener('change', renderInbox);
+byId('rows').addEventListener('click', event => {
+  const button = event.target.closest('[data-ticket]');
+  if (button) {
+    selectRequest(button.dataset.ticket, true);
+    if (matchMedia('(max-width: 900px)').matches) byId('detail').scrollIntoView({ block: 'start' });
+  }
+});
+
+byId('next-state').addEventListener('change', updateCommentLabel);
+byId('transition').addEventListener('submit', event => {
+  event.preventDefault();
+  const request = session.requests.find(item => item.ticket_id === selectedId);
+  try {
+    moveRequest(session, request, byId('next-state').value, byId('comment').value, Date.now());
+  } catch (error) {
+    byId('transition-error').textContent = error.message;
+    byId('comment').setAttribute('aria-invalid', 'true');
+    byId('comment').focus();
+    return;
+  }
+  byId('transition-dialog').close();
+  setDirty(true);
+  selectRequest(request.ticket_id, true);
+  flash('Estado de ' + request.ticket_id + ' actualizado.');
+});
+
+byId('open-import').addEventListener('click', () => {
+  byId('import-form').reset();
+  byId('import-error').textContent = '';
+  byId('import-dialog').showModal();
+});
+byId('import-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const file = byId('client-file').files[0];
+  const isCsv = /\.csv$/i.test(file.name);
+  const submit = event.submitter;
+  submit.disabled = true;
+  byId('import-error').textContent = '';
+  try {
+    const text = await fileText(file);
+    const incoming = validateClients(isCsv ? parseCsv(text) : decodeJson(text), isCsv ? 2 : 1);
+    if (!byId('import-dialog').open || byId('client-file').files[0] !== file) return;
+    const directory = new Map(session.clients.map(client => [client.cliente_nit, client]));
+    const previousSize = directory.size;
+    for (const [nit, client] of incoming) directory.set(nit, client);
+    session.clients = [...directory.values()];
+    const added = directory.size - previousSize;
+    refreshDirectory();
+    setDirty(true);
+    byId('import-dialog').close();
+    flash('Directorio cargado: ' + added + ' nuevos y ' + (incoming.size - added) + ' actualizados.');
+  } catch (error) {
+    byId('import-error').textContent = error.message;
+  } finally {
+    submit.disabled = false;
+  }
+});
+
+byId('export').addEventListener('click', () => {
+  const name = 'aurora-respaldo-' + new Date().toISOString().replace(/[:.]/g, '-') + '.json';
+  const url = URL.createObjectURL(new Blob([JSON.stringify(session, null, 2)], { type: 'application/json' }));
+  const link = element('a');
+  link.href = url;
+  link.download = name;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setDirty(false);
+  flash('Descarga iniciada: ' + name + '.');
+});
+
+byId('restore').addEventListener('click', () => byId('backup-file').click());
+byId('backup-file').addEventListener('change', async event => {
+  const input = event.currentTarget;
+  const file = input.files[0];
+  if (!file) return;
+  const restore = byId('restore');
+  restore.disabled = true;
+  try {
+    const restored = readBackup(decodeJson(await fileText(file)));
+    if (dirty && !window.confirm('Hay cambios sin exportar. ¿Reemplazar la sesión con este respaldo?')) {
+      flash('Restauración cancelada. La sesión actual se conserva.');
+      return;
+    }
+    session = restored;
+    clearFilters();
+    refreshDirectory();
+    setDirty(false);
+    selectRequest(session.requests.at(-1)?.ticket_id ?? null);
+    flash('Respaldo restaurado: ' + session.requests.length + ' solicitudes.');
+  } catch (error) {
+    flash(error.message, true);
+  } finally {
+    restore.disabled = false;
+    input.value = '';
+  }
+});
+
+window.addEventListener('focus', refreshDeadlines);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) refreshDeadlines();
+});
+setInterval(refreshDeadlines, 15_000);
+window.addEventListener('beforeunload', event => {
+  if (dirty) {
+    event.preventDefault();
+    event.returnValue = true;
+  }
+});
+</script>
+</body>
+</html>
